@@ -1,0 +1,58 @@
+---
+layout: post
+title: BigDecimal, RoundingMode, and currency values in Java
+date: 2012-09-11 12:06:16.000000000 -04:00
+categories:
+- EE363 Fall 2012
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _podPressPostSpecific: a:6:{s:15:"itunes:subtitle";s:15:"##PostExcerpt##";s:14:"itunes:summary";s:15:"##PostExcerpt##";s:15:"itunes:keywords";s:17:"##WordPressCats##";s:13:"itunes:author";s:10:"##Global##";s:15:"itunes:explicit";s:7:"Default";s:12:"itunes:block";s:7:"Default";}
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>So admittedly Monday's discussion on BigDecimal was a fiasco. Here's a quick attempt to clean it up, and clarify usage of BigDecimal for representing currency values in our Pizza implementations.</p>
+<p>Consider the following test case, given the Beverage Decorator implementation from Chapter 3:</p>
+<pre>public class BigDecimalTest {
+ @Test
+ public void testBigDecimal() {
+    Beverage b = new Beverage();
+    b.setCost( new BigDecimal( "4.99" ) );
+    b = new Mocha( b, new BigDecimal( "0.49" ) );
+
+    // Apply a hypothetical 7.25% sales tax...
+    MathContext mc = 
+       new MathContext(3, RoundingMode.HALF_UP);
+    BigDecimal tax = new BigDecimal( "1.0725" );
+    BigDecimal cost = b.getCost().multiply( tax, mc );
+
+    Assert.assertEquals( "Cost is not as expected.", 
+        new BigDecimal("5.88"), 
+        cost );
+ }
+}</pre>
+<p>The test case a beverage with base cost of $4.99, and wraps it in a Mocha decorator at $0.49 for a total cost of $5.48. It then applies a hypothetical sales tax of 7.25%.</p>
+<p>The math will work like this:<br />
+$5.48 + 7.25% = $5.8773</p>
+<p>Of course, since we only work in whole-pennies, we round up to $5.88 even. This is asserted in our test case, which passes successfully.</p>
+<p>The magic to make this happen is as follows:</p>
+<ol>
+<li>The BigDecimal instances are constructor using the string representation of the numeric value. This avoids any IEEE floating point issues (when we omit the quotes, the number is interpreted as an IEEE double value by the compiler, potentially introducing error)</li>
+<li>We utilize a MathContext on the arithmetic operation (multiply). This enforces a precision of <strong>3</strong> with a rounding mode of <strong>HALF_UP</strong>.</li>
+</ol>
+<p>You might expect (as I did on Monday) to use a precision of <em>2</em>, not 3; however, when the result is rounded, the least significant digit is lost. So if I specify a precision of 2, the hundredth's digit is dropped on rounding; specifying a precision of 3, I lose the thousandth's digit and get a result back to whole-penny value.</p>
+<p>I could also give the MathContext to each BigDecimal I construct, however, in this instance there is no need. Since the "add" operation has no risk of introducing additional precision, there is no requirement for rounding until I apply the hypothetical tax.</p>
+<p>So the short version is this: when you construct your BigDecimal objects, do so using the constructor that takes a String argument, as Kasa recommended in class on Monday. We'll add a "TaxCalculator" requirement to the Pizza store to exercise the need for RoundingMode and MathContext, but will only utilize it in our unit test scenarios.</p>
+<p>Reference materials:<br />
+<a href="http://docs.oracle.com/javase/7/docs/api/java/math/BigDecimal.html">BigDecimal</a><br />
+<a href="http://docs.oracle.com/javase/7/docs/api/java/math/RoundingMode.html">RoundingMode</a><br />
+<a href="http://docs.oracle.com/javase/7/docs/api/java/math/MathContext.html">MathContext</a></p>

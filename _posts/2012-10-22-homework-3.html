@@ -1,0 +1,28 @@
+---
+layout: post
+title: Homework 3
+date: 2012-10-22 13:31:52.000000000 -04:00
+categories:
+- EE363 Fall 2012
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _podPressPostSpecific: a:6:{s:15:"itunes:subtitle";s:15:"##PostExcerpt##";s:14:"itunes:summary";s:15:"##PostExcerpt##";s:15:"itunes:keywords";s:17:"##WordPressCats##";s:13:"itunes:author";s:10:"##Global##";s:15:"itunes:explicit";s:7:"Default";s:12:"itunes:block";s:7:"Default";}
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Everyone's design project 1 implementation should have a "Gesture" hierarchy (wether you called it Gesture or not, doesn't matter) and a "Scoring" hierarchy. Many of you also have a Player or "hand" object. For homework 3, you must implement the Observer pattern so that your Player object notifies the Scoring object when it has chosen a gesture.</p>
+<p>In other words, you will add GestureSubject and GestureObserver interfaces to your design, and modify the appropriate classes in your design to implement them.</p>
+<p>If you do not have a Player (or similar) object in your design already, you should add that as well. The Player object for this homework does not need to be as described in the original DP1 Extra Credit section; it simply needs to be a class with a "getGesture()" method, that causes that player to choose a gesture (either randomly for computer-generated choices, or via console interaction for human-generated choices).</p>
+<p>Provide one or more test cases where several player objects are created. "getGesture" should be called on each player, which in turn would notify the Scoring object (the observer, properly registered of course) of its choice. Your test case should assert that the scoring object can decide the correct winner after having been notified of the player choices.</p>
+<p>Due: Friday Nov 2. Office hours by e-mail or appointment only.</p>
+<p><strong>UPDATE: </strong>To submit, you must create a branch of your design project 1, and implement the changes in that branch. Instructions to follow shortly!!</p>

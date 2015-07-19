@@ -1,0 +1,30 @@
+---
+layout: post
+title: No Sound on my MacBook Pro
+date: 2012-04-29 14:32:04.000000000 -04:00
+categories:
+- tech
+tags:
+- bug
+- fix
+- macbookpro
+- osx
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Just suffered through a weird quick on my MacBook Pro running OS X Lion... thought I'd post about it in case it happens again. All of a sudden, I had no sound output. The volume controls on the keyboard and onscreen volume indicator worked, but regardless of the volume setting there was no sound.</p>
+<p>On reboot, I noticed the power-on chime was disabled as well... so I reset the NVRAM/PRAM by shutting of the Mac, then turning it on while hold Command+Option+P+R until it restarted a second time. After the restart, I heard the chime - however, as soon as OS X finished booting, I had no sound again!</p>
+<p>After goofing around for a little bit, I resolved the problem by deleting the audio and device preferences files from:</p>
+<pre>/Library/Preferences/Audio</pre>
+<p>Just delete both files from that folder, then shutdown and reset the NVRAM/PRAM again. After booting back up again, everything seems normal. We'll see how long it lasts ...</p>

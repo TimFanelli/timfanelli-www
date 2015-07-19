@@ -1,0 +1,56 @@
+---
+layout: post
+title: Tether Your iPhone in Linux
+date: 2007-08-08 12:00:53.000000000 -04:00
+categories: []
+tags:
+- iphone
+- linux
+- tether
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>About a week ago, maybe two, <a title="http://cre.ations.net/blog/post/tether-your-iphone" href="http://cre.ations.net/blog/post/tether-your-iphone">instructions were posted</a> on the net to tether your iphone's EDGE connection -- allowing you to make full use of your unlimited data plan via your laptop. A notably missing feature in the iPhone, as every other EDGE enabled device I've ever owned allows you to do this with ease.</p>
+<p>The instructions were posted for Windows and Mac though, and while I love my Mac, my laptop runs RHEL 5... as such, here's the instructions to tether your iphone's EDGE to your linux box.</p>
+<p><!--more--></p>
+<p>Assumptions:</p>
+<ol>
+<li value="1">You have a jailbroken iphone.</li>
+<ol>
+<li><a title="http://iphone.fiveforty.net/wiki/index.php/How_to_Escape_Jail" href="http://iphone.fiveforty.net/wiki/index.php/How_to_Escape_Jail">How to escape jail using iPHUC</a></li>
+<li><a title="http://pastebin.com/m7abdb007" href="http://pastebin.com/m7abdb007">Instructions for installing dropbear</a> *optional*</li>
+</ol>
+<li value="2">You're comfortable with Linux, and have wireless-tools installed in your distro</li>
+</ol>
+<p>&nbsp;</p>
+<p>The Process...</p>
+<p>First, download the <a title="http://devices.natetrue.com/iphone/tetherkit.zip" href="http://devices.natetrue.com/iphone/tetherkit.zip">iPhone Tether Kit</a>. DO NOT run the scripts in this zip. Copy the srelay binary to /usr/bin on your phone, and net.sourceforge.socks-relay.srelay.plist into /System/Library/LaunchDaemons on your phone... you can accomplish this using scp if you installed ssh, otherwise, use iPHUC.</p>
+<p>NOTE: if you copied the files using iPHUC, you'll need to set the executable bit on /bin/srelay using chmod. This sounds easy, but it's a process documented elsewhere (see the installing ssh instructions).</p>
+<p>Reboot your iPhone, and you'll have an open socks relay server!</p>
+<p>That's the easy part, and this next one's even easier...</p>
+<p>Open up a command line terminal, and identify your wireless adapter using iwconfig. Mine's eth1, so we'll do the following:</p>
+<pre>ifconfig eth1 down
+iwconfig eth1 mode ad-hoc
+iwconfig eth1 essid "My AdHoc Network"
+ifconfig eth1 up
+ifconfig eth1 10.3.3.1</pre>
+<p>This sets up an adhoc wireless network with ESSID "My AdHoc Network". Pretty simple.</p>
+<p>All you need to do now is connect your iPhone to it. In Settings-&gt;Wi-Fi, select "My AdHoc Network" from the list, and edit it's settings. Press "STATIC" to set a static IP with no router... I entered "10.3.3.2" for my IP and "255.255.255.0" for my subnet mask, and left the other values blank.</p>
+<p>This will connect your iPhone to your adhoc network, and the Phone will use EDGE for its data connection. Now all you need to do is tell your client apps on your laptop to use the SOCKS proxy at 10.3.3.2:1080, and voila! You're accessing the internet via iPhone's EDGE connection on your laptop.</p>
+<p>Many thanks to:</p>
+<ol>
+<li>NerveGAS</li>
+<li>NightWatch</li>
+<li>Everyone at #iphone</li>
+</ol>

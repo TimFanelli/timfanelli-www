@@ -1,0 +1,33 @@
+---
+layout: post
+title: Disable Global Security in WebSphere Application Server
+date: 2012-07-18 09:13:13.000000000 -04:00
+categories:
+- WebSphere
+tags:
+- j2ee
+- security
+- was
+- wsadmin
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>Had to do this at a customer location today, because their security group had an issue defining the cell's security certificates. Personally, I've also had to do this because I brought up old cells I couldn't remember the passwords too, or took over work for colleagues who didn't leave very detailed notes at all.</p>
+<p>If you need to disable security to regain access or control over your WebSphere cell, you can do this on the WSAdmin command line (where $USER_INSTALL_ROOT is the path to your deployment manager profile)</p>
+<pre>$USER_INSTALL_ROOT/bin/wsadmin.sh -conntype NONE
+wsadmin&gt; <strong>securityoff </strong>wsadmin&gt; <strong>$AdminConfig save</strong></pre>
+<p>Once you've done that, start (or restart) your DeploymentManager, and confirm you can log into the Integrated Solutions Console without a password (you'll be prompted for a username still, enter anything or simply leave it blank).</p>
+<p>Then, manually sync your nodes. To do that, for each node: shut down the node agent and any servers running on that node. Then execute (where $USER_INSTALL_ROOT is the path to your node profile)</p>
+<pre>$USER_INSTALL_ROOT/bin/syncNode.sh <em>dmgr_host dmgr_soap_port</em></pre>
+<p>Your cell is now running without global or application security. Any applications which rely on application security may not function properly until you reenable security - but this will allow you to regain access to the cell and configure as needed.</p>

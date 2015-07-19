@@ -1,0 +1,34 @@
+---
+layout: post
+title: Ridding myself of third-party hosting...
+date: 2013-12-01 20:30:53.000000000 -05:00
+categories:
+- servers
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _podPressPostSpecific: a:6:{s:15:"itunes:subtitle";s:15:"##PostExcerpt##";s:14:"itunes:summary";s:15:"##PostExcerpt##";s:15:"itunes:keywords";s:17:"##WordPressCats##";s:13:"itunes:author";s:10:"##Global##";s:15:"itunes:explicit";s:7:"Default";s:12:"itunes:block";s:7:"Default";}
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>So I'm on a slow and steady path to rid myself of my third-party hosting services, and instead will operate my domains in-house. Here's the plan:</p>
+<p>1. <strong>Get a server machine:</strong> this will either be a re-purposed mid-2010 macbook pro I have lying around, or a new Mac Mini server - depending if I can resolve a small stability issue on the old laptop.</p>
+<p>2. <strong>Get storage</strong>: I'm going to pair the server with a Drobo 5D, and start it off with 3x 3TB WD Red drives. I'll run the entire system from there, so I have good on-site data protection. If I go with the laptop for this, the Drobo is a <em>must-have</em> to get this started; if I go with a Mac Mini, the server model already has dual-1TB drives, and I can hold off until into next year for it.</p>
+<p>3. <strong>Rehost the email accounts</strong>: I've always used Google Apps for my domains, but since they discontinued the free edition, this won't be an option moving forward if I register anything new (such as fanel.li). I've also just never been crazy about my emails being skimmed to build a profile about me, so self-hosting will be nice. I'll use OS X Server's Mail system built on Postfix and Dovecot. I already dry-tested this in a VM and confirmed it works great on my ISP, as long as I relay messages out through their SMTP servers.<strong><br />
+</strong></p>
+<p>4. <strong>Rehost the websites</strong>: Currently my sites are hosted across 2 Rackspace images, which cost me about $60/month. Since it's just some wordpress sites, and a bit of static content, it'll be simple to move them onto my new server machine, and I'll likely host them in a linux virtual machine on that box.</p>
+<p>5. <strong>Move off iCloud</strong>: With OS X Server, I can host calendars, contacts, and messaging servers for my domains, which will get me off iCloud for calendar and contact syncing.</p>
+<p>6. <strong>Backup MX</strong>: Several DNS services offer very inexpensive backup MX servers to avoid bouncing emails back if I lose connectivity to my server at the house. ZoneEdit and NoIp both have good looking solutions. The Backup MX spools mail for later delivery if my primary mail server can't be reached.</p>
+<p>7. <strong>Centralized backup</strong>: I already have a time-capsule in the house, but the server will act as a central time machine backup server as well; and with the Drobo attached, I'll have much better protection over my backups than my time capsule's single point of failure right now.</p>
+<p>The only thing I haven't figured out yet is an off-site backup solution. One option would be to get a second Drobo, and use their Transporter solution. Then I could keep the off-site backup in my office at school. Alternatively, I could put it at my mom's house, which has a little longer-term permanence :). But that's a pricey thing to do right now, and I don't have off-site backup at the moment anyway... it's something I want to be able to add in later, but am not going to worry about off the bat.</p>
+<p>As part of this, I also changed my primary domain name... timfanelli.com still exists and works, but I will primarily be using fanel.li from now. This website is now http://tim.fanel.li, and my email address is tim@fanel.li. All the timfanelli.com information redirects or forwards to tim[@|.]fanel.li as of this morning.</p>
+<p><em>obligatory 'holy crap it's been a long time since I updated this blog' comment.</em></p>

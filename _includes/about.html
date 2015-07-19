@@ -1,0 +1,43 @@
+
+<div class="fixed pocono">
+	<div class="sectiontext">
+		<div class="facebook-btn" >
+			<h1>Timothy C. Fanelli</h1><br/><br/>
+			<a class="btn btn-primary btn-block btn-lg round" href="https://www.facebook.com/timfanelli"> 
+				Find me on Facebook
+			</a>
+		</div>
+	</div>
+
+</div>
+
+<div class="scrolling">
+	<div class="container">
+		<div class="row">
+		<div class="span2">
+			<div class="col-md-6">
+				<h2>About</h2>
+				<p>Tim Fanelli is a husband, father, teacher, technologist, and car enthusiast.
+			</div>
+			<div class="col-md-6">
+				<h2>Coming Soon</h2>
+				<p>All of my old content is listed here ... but some of the formatting, images, and links may be broken still. Shoot me a note if you find something wrong!</p>
+
+<ul>
+  {% for post in site.posts %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
+			</div>
+		</div>
+		</div>
+
+	</div>
+
+
+
+
+</div>
+

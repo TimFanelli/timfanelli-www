@@ -1,0 +1,54 @@
+---
+layout: post
+title: Installing WAS v7 Feature Packs
+date: 2011-03-11 12:00:46.000000000 -05:00
+categories: []
+tags: []
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p><a href="http://www.timfanelli.com/2011/03/102/">Last time</a>, we installed WebSphere Application Server v7 for Developers, and updated it with the latest maintenance fixes. WASv7 provides an extremely robust and stable JEE5 application server environment for developing and testing applications -- however, sometimes we just need more.</p>
+<p>In this entry, we’ll review some of the Feature Packs for WebSphere which provide enhanced functionality and programming models, and walk through installing one using IBM’s Installation Manager.</p>
+<p>This guide is specifically geared towards building a development system for implementing and testing applications; but the steps are applicable for any WAS v7 environment. The test system is an Ubuntu 10.10 Desktop system on an i386 platform, but again, the steps are very much the same across other “distributed platforms” (ie Windows, Linux, AIX and HPUX).</p>
+<h2>WebSphere Feature Packs:</h2>
+<p>There are several feature packs available. You can learn about them in IBM’s WAS Feature Pack Demo video, <a title="https://www14.software.ibm.com/webapp/iwm/web/signup.do?source=sw-app&amp;S_PKG=hot_car&amp;S_TACT=109J62OW&amp;S_CMP=web_ibm_ws_appinfra_hero_wasfeatpack" href="https://www14.software.ibm.com/webapp/iwm/web/signup.do?source=sw-app&amp;S_PKG=hot_car&amp;S_TACT=109J62OW&amp;S_CMP=web_ibm_ws_appinfra_hero_wasfeatpack">here</a>. The feature packs give you the ability to add additional functionality to your existing infrastructure, without having to migrate between major product levels. They also provide a delivery mechanism for advanced functionality that wasn’t available at the time of the application server’s release, so you don’t have to wait for the next major version of WebSphere!</p>
+<p>Some of the feature packs available include:</p>
+<ul>
+<li>Feature Pack for Modern Batch, which provides support for Java Batch programming models, along with tools and controls for batch job execution and management.</li>
+<li>Feature Pack for OSGi and JPA 2.0, which enhances productivity through simplified component models, and the latest relational database access standars.</li>
+<li>Feature Pack for SCA enables support for the SCA 1.0 programming models, simplifying composite application development in your SOA.</li>
+</ul>
+<p>And several others... find out more at <a title="http://www-01.ibm.com/software/webservers/appserv/was/featurepacks/" href="http://www-01.ibm.com/software/webservers/appserv/was/featurepacks/">IBM’s WebSphere Application Server Feature Packs</a> overview page. (Heads up, some of the feature packs listed are for WAS 6.1</p>
+<h2>Prerequisites:</h2>
+<p>To start, we’ll need to obtain IBM Installation Manager, which you will use to install feature packs. Download it here: <a title="http://www-01.ibm.com/support/docview.wss?rs=180&amp;uid=swg24023498" href="http://www-01.ibm.com/support/docview.wss?rs=180&amp;uid=swg24023498">http://www-01.ibm.com/support/docview.wss?rs=180&amp;uid=swg24023498</a></p>
+<h2>Installing IBM Installation Manager</h2>
+<p>Installation Manager is a repository-based package management system for IBM’s software solutions. To install it, simply extract the bundle you downloaded, and execute the installer with administrative privileges:</p>
+<pre>    sudo ./install</pre>
+<p>Follow the steps in the installation wizard to install the Installation Manager package. When it is finished, click “Restart Installation Manager” to launch IM.</p>
+<p>Note: When IM launches again, it will attempt to connect to the public IBM download site to check for available packages and updates. You’ll need to have an account to connect to these public repositories. If you don’t already have one, click the “IBM ID help and FAQ” link in the dialog to register.</p>
+<h2>Importing WebSphere Application Server</h2>
+<p>In order to work with your existing WAS installation, you must first “import” it into IM. On the main Installation Manager screen, click the “Import” button. Enter the path to your WAS_HOME in the “Installation Directory” drop down (this drop-down will be pre-populated with any existing WAS installations, so you can simply select it from the list), and click Next. You can leave the defaults for the remainder of the screens through the wizard.</p>
+<p>Once you’ve imported your application server, you can continue on to install Feature Packs.</p>
+<h2>Install a Feature Pack</h2>
+<p>We’ll walk through installing the Feature Pack for Modern Batch to demonstrate the process, but it is very much identical for any of the available updates.</p>
+<p>On the Installation Manager main page, click the Install button to see a list of available feature packs. In the list of available installation packages, check the box next to “IBM WebSphere Application Server V7 Feature Pack for Modern Batch” and click Next. Read and accept the license agreement, and then click Next through the remainder of the wizard, finally clicking “Install” at the end.</p>
+<p>After the installation, you’ll have the opportunity to launch the Profile Management Tool to augment your WAS profiles. This is necessary to enable the functionality in your WAS environments.</p>
+<h2>Augmenting Your WebSphere Profiles</h2>
+<p>Once you’ve installed your feature pack, you must augment your application server profiles to enable it. Launch the profile management tool, and augment each of your profiles with the new feature pack.</p>
+<p>NOTE: For WebSphere Application Server v7 For Developers, you will only have a single profile by default, called AppSrv01. If you have an ND environment, be sure to augment your deployment manager profile first, then each of your node’s profiles.</p>
+<h2>Verifying the Feature Pack Installation</h2>
+<p>You can verify the feature pack’s installation by looking at the versionInfo output in your WAS installation:</p>
+<pre>cd /opt/IBM/WebSphere/AppServer
+sudo bin/versionInfo.sh</pre>
+<p>The list of Installed Products will show your installed feature packs and product levels. Most of the feature packs also have sample applications used for Installation Verification Test. You’ll find information about those in the feature pack’s InfoCenter, here: <a title="http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp" href="http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp">WebSphere v7 InfoCenter</a></p>

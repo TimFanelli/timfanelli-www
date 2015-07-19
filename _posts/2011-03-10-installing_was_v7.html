@@ -1,0 +1,66 @@
+---
+layout: post
+title: Installing WebSphere Application Server v7
+date: 2011-03-10 12:00:49.000000000 -05:00
+categories:
+- WebSphere
+tags:
+- appsrv
+- ibm
+- was
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+  _wp_old_slug: '102'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>In this entry, we’ll walk through installing WebSphere Application Server v7, applying the latest fix-packs. In the next entry, we’ll install Feature Packs to enable advanced functions in your application server environment. (Installing in a headless environment? Check out my guide to installing WebSphere silently, here: <a title="http://www-03.ibm.com/support/techdocs/atsmastr.nsf/WebIndex/TD105510" href="http://www-03.ibm.com/support/techdocs/atsmastr.nsf/WebIndex/TD105510">Silent Installation of IBM WebSphere v7 + Feature Packs in a Headless Environment)</a></p>
+<div>
+<div>
+<div>
+<p>This guide is specifically geared towards building a development system for implementing and testing applications; but the steps are applicable for any WAS v7 environment. The test system is an Ubuntu 10.10 Desktop system on an i386 platform, but again, the steps are very much the same across other “distributed platforms” (ie Windows, Linux, AIX and HPUX).</p>
+<h2>Prerequisites:</h2>
+<p>To start, there are several things we’ll need to obtain:</p>
+<ol>
+<li value="1">WebSphere Application Server v7 for Developers -- this is optional if you already have WAS installation media, otherwise, you can download it for free here: <a title="http://www-01.ibm.com/software/webservers/appserv/was/featurepacks/modernbatch/" href="http://www-01.ibm.com/software/webservers/appserv/was/featurepacks/modernbatch/">http://www-01.ibm.com/software/webservers/appserv/was/featurepacks/modernbatch/</a>. Keep in mind that the free WebSphere for Developers is only available for 32-bit Linux or Windows platforms.</li>
+<li value="2">IBM Update Installer -- you will use this to apply fixpack updates to your application server. Download it here: <a title="http://www-01.ibm.com/support/docview.wss?uid=swg24020446" href="http://www-01.ibm.com/support/docview.wss?uid=swg24020446">http://www-01.ibm.com/support/docview.wss?uid=swg24020446</a></li>
+</ol>
+<p>Note: If you’ve never downloaded software from IBM before, you may want to register for an account. The process takes only a few minutes, and is only required the first time. For subsequent downloads, you can simply login again. While you can proceed without creating an account, you’ll need a username and password later to <a title="11_Installing_WAS_v7_Feature_Packs.html" href="http://iweb.timfanelli.com/appsrv/blog/Entries/2011/3/11_Installing_WAS_v7_Feature_Packs.html">install additional feature packs</a> anyway.</p>
+<p>Note: The downloads will go quicker if you take advantage of IBM’s Download Director, which requires a Java-plugin in your web browser. On Ubuntu, enable Canonical-Partners in your software sources list, then run: sudo apt-get install sun-java6-jdk sun-java6-plugin</p>
+<p>Note: Ubuntu uses the dash shell by default, which will cause the WebSphere installation to hang. You’ll want to relink /bin/sh to /bin/bash before proceeding!</p>
+<h2>Installing WebSphere v7</h2>
+<p>Extract your installation media, and launch the setup program. You can install WebSphere with regular-user permissions, if you like, however we’ll install it at the system level using administrative permissions by invoking the installer using ‘sudo’:</p>
+<pre>sudo ./WAS/install</pre>
+<p>The installation wizard will guide you through the process. Choose “Application Server” as the WebSphere Application Server Environment, and leave administrative security enabled (you’ll be prompted to provide an admin user id and password... for development systems, I usually use just “wsadmin” as the userid and password)</p>
+<p>When the installation finishes, you’ll have a new WebSphere Application Server environment installed to /opt/IBM/WebSphere/AppServer (a location we refer to as “WAS_HOME”)</p>
+<h2>Applying the Latest Fix Packs</h2>
+<p>IBM periodically releases maintenance updates for WebSphere, called “fix packs.” Before moving on, you’ll want to update your application server to the latest maintenance level. You can find the most recent maintenance level here: <a title="http://www-01.ibm.com/support/docview.wss?uid=swg27004980" href="http://www-01.ibm.com/support/docview.wss?uid=swg27004980">http://www-01.ibm.com/support/docview.wss?uid=swg27004980</a></p>
+<p>Click the platform link under the most recent fix pack level to download it. You’ll need to download both the “AppSrv” and “Java SDK” updates for your platform. For example, on my test system, I will download the “32-bit x86 AMD/Intel AppServer” and “32-bit x86 AMD/Intel Java SDK” updates for Fix Pack 15 for Linux.</p>
+<p>While we’re waiting for the fix pack to download, let’s install the IBM Update Installer, which is needed to apply the update. Extract the 7.0.0.XX-WS-UPDI-LinuxIA32.tar.gz bundle you downloaded earlier (note: the XX should match your fix pack level!), then launch the Update-Installer Installer, like so:</p>
+<pre>    sudo ./UpdateInstaller/install</pre>
+<p>The installation wizard will guide you through the process, very much the same as the WAS Installer. If you left the checkbox checked at the end, then Update Installer will open after the installation; otherwise, you can launch it from the command line, using:</p>
+<pre>    sudo /opt/IBM/WebSphere/UpdateInstaller/update.sh</pre>
+<p>The update installer will prompt you for your WAS_HOME location (should be filled in by default), and then for the “maintenance operation.” We’ll choose “Install maintenance pack,” then browse to the folder where we downloaded the two update files (*.pak).</p>
+<p>Best Practice: Move the downloaded update files into the UpdateInstaller’s “maintenance” subfolder for safe-keeping. If you need to uninstall them later, or re-install them into another WAS install, you’ll have them handy!</p>
+<p>The Update Installer will show you the PAK files it can apply (if you have others that are not compatible with this WAS version, they will be listed, but disabled). Select both the AppServer and Java SDK updates and click Next through the rest of the wizard.</p>
+<h2>Verify You Application Server Installation</h2>
+<p>First, let’s verify that the fix pack applied properly, and we’re at the correct maintenance level:</p>
+<pre>cd /opt/IBM/WebSphere/AppServer
+sudo bin/versionInfo.sh</pre>
+<p>Observe that the installed WAS Level matches your applied maintenance level. For example, if you installed Fix Pack 15, it should report: 7.0.0.15.</p>
+<p>Finally, start your application server and connect to the Integrated Solutions Console (sometimes called “admin console”):</p>
+<pre>    sudo bin/startServer.sh server1</pre>
+<p>You’ll find the ISC by browsing to: <a title="http://localhost:9080/admin" href="http://localhost:9080/admin">http://localhost:9080/admin</a></p>
+</div>
+</div>
+</div>
+<p>&nbsp;</p>

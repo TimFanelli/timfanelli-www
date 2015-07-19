@@ -1,0 +1,45 @@
+---
+layout: post
+title: Using Explicit Import Statements in Java Source Files
+date: 2008-06-24 12:00:06.000000000 -04:00
+categories: []
+tags:
+- java
+- programming
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I'd always read, and have tried to follow, the general rule of thumb that generalized package level imports are bad practice, and today at work I encountered my first real life example of why.</p>
+<p><!--more--></p>
+<p>A customer who developed a J2EE application in-house on a J2EE 1.4 application server is currently migrating to a newer version, which supports J2EE 1.5, and EJB3. Their application has a source file that is structured basically like this:</p>
+<pre>package com.customer.application.ejbs;
+
+import java.rmi.*;
+import javax.ejb.*;
+
+public interface MyPublicInterface extends Remote {
+    // bla bla bla
+}</pre>
+<p>Up until now, this had always worked just fine. Then, they tried to take their application bundle and migrate it to a new version of the platform. This resulted in runtime exceptions indicating that the class Remote could not be resolved due to a naming conflict.</p>
+<p>Here's the problem: their interface MyPublicInterface extends java.rmi.Remote. J2EE 1.5 introduced a new class, javax.ejb.Remote, which is the annotation class used to identify an EJB's remote business interface. Since they use wild-card includes to make every class in both the java.rmi and javax.ejb packages available, they now have a naming conflict that can not be resolved when resources in their EAR files are compiled during deployment.</p>
+<p>This is an important point - that this "error" is NOT a bug in the application server. There is a mentality among testers that says "well if it works on platform A, and not platform B, then there is a bug in platform B." - and this is simply not the case.</p>
+<p>In fact, if the customer recompiles their application against the J2EE 1.5 libraries, this will be detected at compile time, well before the application ever gets deployed to the application server!</p>
+<p>You basically have two choices in this scenario:</p>
+<ol>
+<li>Fully qualify any use of the Remote interface to java.rmi.Remote; or</li>
+<li>Use explcit import statements</li>
+</ol>
+<p>In other words - rather that using wildcard imports, you should specifically import each class and interface you need from each package individually. I know that seems tedious, but most Java IDEs on the market (both free and commercial) automatically manage your imports for you. Many (such as Eclipse, and those based on Eclipse) have refactoring capabilities that will clean up your imports for you.</p>
+<p>While it may seem like a tedious and daunting task - it is clearly the better fix. By fully qualifying use of the Remote interface you will fix the problem at hand, but still leave yourself open to repeating this problem down the line, when J2EE 1.6 comes around.</p>
+<p>So long story short... Java's tagline really should be write carefully, run anywhere.</p>

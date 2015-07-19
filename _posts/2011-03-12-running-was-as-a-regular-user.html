@@ -1,0 +1,41 @@
+---
+layout: post
+title: Running WAS as a 'regular' User
+date: 2011-03-12 12:00:59.000000000 -05:00
+categories:
+- WebSphere
+tags:
+- appsrv
+- developer
+- ibm
+- was
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>If you're like me, you like to install WebSphere in a system-wide WAS_HOME on your development system, such as the default:</p>
+<pre>/opt/IBM/WebSphere/AppServer</pre>
+<p>However, you also:</p>
+<ol>
+<li>Want to integrate WebSphere with your IDE</li>
+<li>Don’t want to run your IDE as “root” just so you can start/stop the server, access logs, etc.</li>
+<li>Find it mildly frustrating having to run everything using sudo</li>
+</ol>
+<p>Here’s a couple quick steps that will allow you to work with your existing WebSphere installation as your regular user. What we’ll do is create a new group, wasdev, add your user to that group, and then give that group full permissions to WAS_HOME.</p>
+<pre>sudo groupadd wasdev
+sudo usermod -a -G username wasdev   
+sudo chgrp -R /opt/IBM/WebSphere
+sudo chmod -R g+u /opt/IBM/WebSphere</pre>
+<p>Then just log-out and back in to refresh your group permissions, and voila! You now have full control over you WAS install with regular user permissions.</p>
+<p>This is also great in production environments, where you really shouldn’t be running services as “root” anyway.</p>
+<p>Note: Even though my WAS_HOME is /opt/IBM/WebSphere/AppServer, I chose to change the group and permissions on the parent directory instead. This also covers the UpdateInstaller, which will allow me to apply fix-packs with regular user permissions later!</p>

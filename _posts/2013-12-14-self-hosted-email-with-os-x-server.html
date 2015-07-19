@@ -1,0 +1,26 @@
+---
+layout: post
+title: Self-Hosted Email with OS X Server
+date: 2013-12-14 18:58:32.000000000 -05:00
+categories:
+- servers
+tags: []
+status: draft
+type: post
+published: false
+meta:
+  _edit_last: '1'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>I got my MacBookPro back from service on Friday, so I was able to get my email hosting moved in-house on my server. Overall, it was a pretty simple setup, requiring only a little bit of interaction with Postfix on the command line to get things working smoothly.</p>
+<p>I'm using OS X Mavericks Server, which hosts mail using Postfix for SMTP and Dovecot for IMAP. For the most part, the default configuration was sufficient - I just defined my users, my domain, my virtual domains, configured the SMTP relay for my ISP's mail servers, and started the service.</p>
+<p>I was considering a Backup MX service so there'd be some semblance of QoS on my mail system - but decided that was pretty worthless... most mail servers will hold and redeliver a message over a reasonable period of time incase I have an outage; and my e-mail is not "mission critical" here... I quickly realized I wasn't happy with OS X' junk mail filtering, though (set to aggressive, things that were junk were still coming in, and things that weren't were being flagged), so I signed up for McAfee Inbound E-Mail Filtering. It's a cloud service which provides virus and junk mail scanning before forwarding the messages to my server for delivery. My domain MX records point to their service, and their service forwards to my server. For $13/year, it's working out really really well.</p>
+<p>I'm also still synchronizing my Gmail account to my new self-hosted mail server... a very long process! My imapsync process has been running for about 26 hours now, and still shows 17,500 messages to go.</p>
+<p>&nbsp;</p>

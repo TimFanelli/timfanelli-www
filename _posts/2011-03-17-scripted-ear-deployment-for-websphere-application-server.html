@@ -1,0 +1,123 @@
+---
+layout: post
+title: Scripted EAR Deployment for WebSphere Application Server
+date: 2011-03-17 08:30:35.000000000 -04:00
+categories:
+- WebSphere
+tags:
+- appsrv
+- automation
+- deploy
+- developer
+- ibm
+- was
+status: publish
+type: post
+published: true
+meta:
+  _edit_last: '1'
+author:
+  login: timfanelli
+  email: tim@timfanelli.com
+  display_name: timfanelli
+  first_name: ''
+  last_name: ''
+excerpt: !ruby/object:Hpricot::Doc
+  options: {}
+---
+<p>IBM WebSphere provides a lot of great scripting support, which is an absolute necessity in today’s agile world. If your shop requires automated build, deployment, and testing of your JEE applications, you’ll want to make the most out of it and automate deployment to WebSphere Application Server so your testing is done on the same platform as your production hosting.</p>
+<p>Today I’ll show you two ways to automate deployment: first, using an Ant script to deploy to a single-server -- perfect for deploying to WAS For Developers on your development workstation; second, using a wsadmin jython script to deploy to a server cluster -- for moving your applications into your QA and Production environments.</p>
+<p>(Side Note -- you are taking advantage of WebSphere For Developers, right? It’s free... <a href="http://www.timfanelli.com/2011/03/start-developing-jee-solutions-using-websphere/">learn more here</a>)</p>
+<h2>Automating Deployment with Ant</h2>
+<p>A lot of people don’t realize that WebSphere ships with a copy of Apache Ant (WAS7 ships with Ant 1.6.5), and skip right to Jython for WebSphere scripting. While this is certainly a valid option, it adds an extra layer of complexity to your development and testing cycles which just isn’t necessary. WebSphere provides a set of Ant tasks which make it possible to do almost anything via Ant script, including the ability to invoke wsadmin scripts written in Jython or JACL if you’ve already got them in place.</p>
+<p>Here’s a simple Ant script which shows how to deploy an EAR to your WAS Server using WebSphere’s InstallApplication task</p>
+<div>
+<div id="id2">
+<div>
+<div>
+<div>
+<pre>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project name="demo" default="main"&gt;
+   &lt;property environment="env"/&gt;
+   &lt;property name="appName" value="SampleApplication"/&gt;
+
+   &lt;taskdef name="installApplication"   
+        classname="com.ibm.websphere.ant.tasks.InstallApplication"/&gt;
+
+   &lt;taskdef resource="net/sf/antcontrib/antcontrib.properties"&gt;
+      &lt;classpath&gt;
+       &lt;pathelement location="./lib/ant-contrib-1.0b3.jar"/&gt;
+      &lt;/classpath&gt;
+   &lt;/taskdef&gt;
+
+   &lt;target name="determineWASLevel"&gt;
+      &lt;loadfile property="was.product" 
+          srcFile="${env.WAS_HOME}/properties/version/WAS.product"/&gt;
+
+      &lt;propertyregex property="was.level"
+                     input="${was.product}"
+                     regexp="(([0-9]{1}\.){3}[0-9]{2})"
+                     select=""/&gt;
+   &lt;/target&gt;
+
+   &lt;target name="main" depends="determineWASLevel"&gt;
+      &lt;echo message="Installing ${appName} to WebSphere ${was.level}."/&gt;
+      &lt;echo message="WAS_HOME: ${env.WAS_HOME}"/&gt;
+
+      &lt;installApplication   wasHome="${env.WAS_HOME}"
+                            ear="${appName}.ear"
+                            connType="SOAP"
+                            host="localhost"
+                            user="wsadmin"
+                            password="wsadmin"
+                            failonerror="true"/&gt;
+   &lt;/target&gt;
+&lt;/project&gt;</pre>
+</div>
+</div>
+</div>
+</div>
+<p>This script does relies on <a title="http://ant-contrib.sourceforge.net/" href="http://ant-contrib.sourceforge.net/">Ant Contrib</a> for the propertyregex task, which I use to parse out the WAS Level... this is done purely for debug and demonstration purposes, and can be removed if you like.</p>
+</div>
+<p>The important things here from a application deployment perspective are:</p>
+<ol>
+<li value="1">The taskdef for installApplication, which is implemented by the com.ibm.websphere.ant.tasks.InstallApplication class.</li>
+<li value="2">The invocation of the installApplication task, which specifies not the connection type, host, and username/password to use to connect to the server.</li>
+</ol>
+<p>To invoke it, simply call “ws_ant” which ships with WebSphere:</p>
+<pre>    $WAS_HOME/bin/ws_ant.sh</pre>
+<p>You can <a title="deployWithAntDemo.tgz" href="http://static.timfanelli.com/deployWithAnt.tgz">deployWithAntDemo.tgz</a>, which contains the ant-contrib library and this build script. Please feel free to modify and use it however you like!</p>
+<p>Note: It is possible to use your own version of Ant if necessary; for instance, if the rest of your system requires Ant 1.8.2 for new tasks. This is not supported or recommended by IBM -- but I’ll cover how to do it in a later post.</p>
+<h2>Automating Deployment with wsadmin in Jython</h2>
+<p>For more complex deployment scenarios, it may be advantageous to write a Jython script and invoke it using wsadmin, WebSphere scripting environment.</p>
+<p>Here’s a sample Jython method you can use to deploy an EAR to an application server cluster:</p>
+<div id="id3">
+<div>
+<div>
+<div>
+<pre>def installSystemApp(cluster, appname):
+  cell = AdminControl.getCell();
+  cellName = "WebSphere:cell=" + cell
+  earPath=appname + ".ear"
+  installTarget = [ "-cluster", cluster ]
+  MapModulesToServers = [[".*", ".*", cellName + ",cluster=" + cluster ]]
+
+  options = [  "-nopreCompileJSPs",
+    "-distributeApp",
+    "-noreloadEnabled",
+    "-noprocessEmbeddedConfig",
+    "-usedefaultbindings",
+    "-zeroEarCopy",
+    installTarget,
+    "-MapModulesToServers",  MapModulesToServers,
+    "-appname",  appname,
+  ]
+
+  AdminApp.install(earPath, options)
+  print "INFO: installed " + appname + " to " + msg</pre>
+</div>
+</div>
+</div>
+</div>
+<p>You would obviously want to include this method in a more complete Jython script; perhaps one that parsed command line parameters provided by an automated build system that includes the full path to the EAR (this method assumes Current Working Directory).</p>
+<p>Either method for automating deployment is going to give you a lot of flexibility to improve your automated build and test infrastructures -- a critical component of any Agile software operation.</p>
