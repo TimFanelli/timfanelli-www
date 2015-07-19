@@ -1,8 +1,8 @@
 title: Timothy C. Fanelli
 email: tim@fanel.li
 description: 
-baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://timfanelli.github.io/timfanelli-www" # the base hostname & protocol for your site
+baseurl: "timfanelli-www" # the subpath of your site, e.g. /blog/
+url: "http://timfanelli.github.io" # the base hostname & protocol for your site
 twitter_username: timfanelli
 github_username:  doctorbatch
 
