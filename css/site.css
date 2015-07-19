@@ -62,7 +62,7 @@ a {
 	margin-right: 5%;
 	width: 44px;
 	height: 100%;
-	background: url("/images/cd-icon-menu.svg") no-repeat center center;
+	background: url("/timfanelli-www/cd-icon-menu.svg") no-repeat center center;
 	background-size: 44px 44px;
 	cursor: pointer;
 }
@@ -203,11 +203,11 @@ a {
 }
 
 .fixed.driving {
-	background-image: url("/images/driving.jpg");
+	background-image: url("/timfanelli-www/images/driving.jpg");
 }
 
 .fixed.pocono {
-	background-image: url("/images/pocono-raceway.jpg");
+	background-image: url("/timfanelli-www/images/pocono-raceway.jpg");
 }
 
 .fixed.vrksasana {
@@ -220,7 +220,7 @@ a {
 }
 
 .fixed.willow {
-	background-image: url("/images/willow-fall.jpg");
+	background-image: url("/timfanelli-www/images/willow-fall.jpg");
 }
 
 @media only screen and (min-width: 768px) {
