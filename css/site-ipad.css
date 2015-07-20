@@ -211,6 +211,15 @@ a {
 	background-image: url("/images/storefront.png");
 }
 
+
+.fixed.driving {
+        background-image: url("/images/driving.jpg");
+}
+
+.fixed.pocono {
+        background-image: url("/images/pocono-raceway.jpg");
+}
+
 .fixed.vrksasana {
 	background-image:
 		url("https://upload.wikimedia.org/wikipedia/commons/2/2a/Vrksasana.jpg");
